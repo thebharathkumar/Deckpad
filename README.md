@@ -5,17 +5,17 @@ Plug it into your Mac and tap *Yes*, *No*, *Switch to Opus*, *Rewind* or *Backgr
 or dictate a reply, without touching the keyboard. The phone lights up and buzzes
 when Claude needs your permission.
 
-<p align="center"><img src="docs/deckpad.jpg" alt="Deckpad on a phone: a grid of keys for Claude Code" width="320"></p>
+I originally built Deckpad for my own desk, to give an old phone a job, and decided to share it.
+
+<p align="center"><img src="docs/deckpad-demo.gif" alt="Deckpad demo: Claude asks for permission, Yes is tapped on the phone, the model switches to Opus, a reply is dictated, then the install steps" width="800"></p>
+
+<p align="center"><a href="site/deckpad-demo.mp4">Watch the full demo with sound (23s)</a></p>
 
 - **Free.** No API key, no credits. Deckpad presses keys on your Mac; Claude Code does the rest.
 - **Private.** Everything runs on your own Mac. Nothing is sent to any server, including ours (we don't have one).
 - **Wired.** Plug in the phone and the pad opens on it automatically. Wi-Fi works too.
 - **Yours.** Add, recolor, re-icon and reorder keys from the phone.
 - **Tiny.** One Python file, standard library only.
-
-**Watch the 23-second demo:** [deckpad-demo.mp4](site/deckpad-demo.mp4)
-
-[![Deckpad demo: a permission prompt, a tap on the phone, a model switch and the install](docs/demo-poster.jpg)](site/deckpad-demo.mp4)
 
 > Unofficial. Deckpad is a community project and is not affiliated with or endorsed by Anthropic.
 
