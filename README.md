@@ -13,6 +13,10 @@ when Claude needs your permission.
 - **Yours.** Add, recolor, re-icon and reorder keys from the phone.
 - **Tiny.** One Python file, standard library only.
 
+**Watch the 23-second demo:** [deckpad-demo.mp4](site/deckpad-demo.mp4)
+
+[![Deckpad demo: a permission prompt, a tap on the phone, a model switch and the install](docs/demo-poster.jpg)](site/deckpad-demo.mp4)
+
 > Unofficial. Deckpad is a community project and is not affiliated with or endorsed by Anthropic.
 
 ## Requirements

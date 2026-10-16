@@ -73,6 +73,8 @@
     .features p { margin: 0; color: var(--label-2); }
 
     .note { color: var(--label-2); max-width: 40em; }
+    .demo video { display: block; width: 100%; height: auto; border-radius: 22px; background: #000;
+      box-shadow: 0 30px 100px rgba(41,151,255,.14), 0 0 0 1px var(--line); }
     .note strong { color: var(--label); font-weight: 600; }
 
     footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--label-3); font-size: 14px; }
@@ -84,9 +86,41 @@
       section { padding: 56px 0; }
     }
     @media (max-width: 480px) { .wrap { padding: 0 16px; } }
+    /* ---- intro: the logo's four keys press in, then the page rises */
+    .intro { position: fixed; inset: 0; z-index: 100; display: grid; place-content: center; justify-items: center; gap: 14px;
+      background: var(--bg); animation: intro-out .6s cubic-bezier(.2,.8,.2,1) 1.55s forwards; }
+    .intro-mark { display: grid; grid-template-columns: repeat(2, 30px); gap: 7px; margin-bottom: 8px; }
+    .intro-mark span { width: 30px; height: 30px; border-radius: 8px; transform: scale(.3); opacity: 0;
+      animation: key-in .5s cubic-bezier(.34,1.56,.64,1) forwards; }
+    .intro-mark span:nth-child(1) { background: var(--green); animation-delay: .1s; }
+    .intro-mark span:nth-child(2) { background: var(--orange); animation-delay: .22s; }
+    .intro-mark span:nth-child(3) { background: #ffd60a; animation-delay: .34s; }
+    .intro-mark span:nth-child(4) { background: var(--blue); animation-delay: .46s; }
+    .intro-word { font-size: 34px; font-weight: 700; letter-spacing: -.03em; opacity: 0; animation: rise .6s cubic-bezier(.2,.8,.2,1) .7s forwards; }
+    .intro-by { color: var(--label-2); font-size: 15px; opacity: 0; animation: rise .6s cubic-bezier(.2,.8,.2,1) .85s forwards; }
+    @keyframes key-in { to { transform: scale(1); opacity: 1; } }
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes intro-out { to { opacity: 0; transform: scale(1.04); visibility: hidden; } }
+    .hero h1, .hero .lede, .hero .ctas, .phone { opacity: 0; animation: rise .8s cubic-bezier(.2,.8,.2,1) forwards; }
+    .hero h1 { animation-delay: 1.75s; } .hero .lede { animation-delay: 1.87s; }
+    .hero .ctas { animation-delay: 1.99s; } .phone { animation-delay: 1.9s; animation-duration: 1s; }
+    .seen .intro { display: none; }
+    .seen .hero h1, .seen .hero .lede, .seen .hero .ctas, .seen .phone { animation-delay: 0s; }
+    @media (prefers-reduced-motion: reduce) {
+      .intro { display: none; }
+      .hero h1, .hero .lede, .hero .ctas, .phone { animation: none; opacity: 1; }
+    }
+    footer a { color: var(--label-2); }
   </style>
 </head>
 <body>
+  <script>try { if (sessionStorage.getItem('deckpad-intro')) document.documentElement.classList.add('seen');
+    sessionStorage.setItem('deckpad-intro', '1'); } catch (e) {}</script>
+  <div class="intro" aria-hidden="true">
+    <div class="intro-mark"><span></span><span></span><span></span><span></span></div>
+    <div class="intro-word">Deckpad</div>
+    <div class="intro-by">by Bharath</div>
+  </div>
   <div class="wrap">
     <nav>
       <a class="brand" href="./"><img src="icon.svg" alt="">Deckpad</a>
@@ -100,13 +134,23 @@
           background, or just talk. It glows and buzzes when Claude needs you.</p>
         <div class="ctas">
           <a class="btn" href="#install">Get Deckpad</a>
-          <a class="btn ghost" href="https://github.com/thebharathkumar/Deckpad">View the code</a>
+          <a class="btn ghost" href="#demo">Watch the demo</a>
         </div>
       </div>
       <div class="phone"><img src="deckpad.jpg" width="780" height="1688"
         alt="Deckpad on a phone showing 'Claude needs your permission to use Bash' above a grid of keys: Yes, No, Continue, Stop, Fable, Opus, Sonnet, Haiku, Agents, Background, Rewind and more."></div>
     </header>
   </div>
+
+  <section class="demo" id="demo">
+    <div class="wrap">
+      <h2>See it in action.</h2>
+      <p class="sub">23 seconds: a permission prompt, a tap, a model switch, and the install.</p>
+      <video controls playsinline preload="metadata" poster="deckpad-demo.jpg" width="1920" height="1080">
+        <source src="deckpad-demo.mp4" type="video/mp4">
+      </video>
+    </div>
+  </section>
 
   <section>
     <div class="wrap">
@@ -166,7 +210,7 @@ python3 server.py</pre>
 
   <footer>
     <div class="wrap">
-      <p>Deckpad is free and open source under the MIT license.</p>
+      <p>Made by <a href="https://github.com/thebharathkumar">Bharath</a>. Free and open source under the MIT license.</p>
       <p>Unofficial community project. Not affiliated with or endorsed by Anthropic. Claude is a trademark of Anthropic.</p>
     </div>
   </footer>
