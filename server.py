@@ -8,7 +8,8 @@ dependencies beyond the Python standard library.
 
 Security model (single user, home network):
   * A random token is created on first run (.deck_token, chmod 600). The phone
-    pairs once via /pair?t=TOKEN and gets an HttpOnly, SameSite=Strict cookie.
+    pairs once via /pair?t=TOKEN and gets an HttpOnly, SameSite=Lax cookie (Lax, not Strict, so it is sent
+    when Chrome is launched from adb or a home-screen shortcut).
   * Only private-network / Tailscale clients are accepted.
   * Every POST needs the custom header X-Deck: 1 (blocks cross-site forms).
   * The phone can only trigger keystroke macros and type text. There is no
@@ -62,8 +63,10 @@ def load_token():
     if TOKEN_PATH.exists():
         return TOKEN_PATH.read_text().strip()
     token = secrets.token_urlsafe(24)
-    TOKEN_PATH.write_text(token)
-    os.chmod(TOKEN_PATH, 0o600)
+    # Created owner-only from the start, so it is never briefly world-readable.
+    fd = os.open(TOKEN_PATH, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, "w") as f:
+        f.write(token)
     return token
 
 
@@ -246,8 +249,10 @@ class Handler(BaseHTTPRequestHandler):
     sys_version = ""
 
     def log_message(self, fmt, *args):
-        if "/api/events" not in (args[0] if args else ""):
-            sys.stderr.write(f"{self.client_address[0]} {fmt % args}\n")
+        line = fmt % args
+        if "/api/events" not in line:
+            # Never write the pairing token to logs (deck.log is a plain file).
+            sys.stderr.write(f"{self.client_address[0]} {re.sub(r't=[^ &]*', 't=<redacted>', line)}\n")
 
     # -- helpers
     def ip(self):
@@ -305,8 +310,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def read_json(self):
         length = int(self.headers.get("Content-Length") or 0)
-        if length > MAX_BODY:
-            raise ValueError("body too large")
+        if not 0 <= length <= MAX_BODY:
+            raise ValueError("bad body length")
         return json.loads(self.rfile.read(length) or b"{}")
 
     # -- GET
@@ -349,7 +354,7 @@ class Handler(BaseHTTPRequestHandler):
         if not hmac.compare_digest(given.encode(), TOKEN.encode()):
             record_failure(self.ip())
             return self.send(401, "Wrong pairing link.", "text/plain")
-        cookie = (f"deck={TOKEN}; HttpOnly; SameSite=Strict; Path=/; "
+        cookie = (f"deck={TOKEN}; HttpOnly; SameSite=Lax; Path=/; "
                   f"Max-Age={60 * 60 * 24 * 365}")
         self.send(303, b"", "text/plain", {"Set-Cookie": cookie, "Location": "/"})
 
@@ -472,9 +477,11 @@ def usb_watcher(adb):
             for serial in online - ready:
                 subprocess.run([adb, "-s", serial, "reverse", f"tcp:{PORT}", f"tcp:{PORT}"],
                                check=True, capture_output=True, timeout=10)
+                # The application_id extra makes Chrome reuse one tab instead of opening a new one.
                 subprocess.run([adb, "-s", serial, "shell", "am", "start", "-a",
                                 "android.intent.action.VIEW", "-d",
-                                f"http://localhost:{PORT}/pair?t={TOKEN}"],
+                                f"http://localhost:{PORT}/pair?t={TOKEN}",
+                                "--es", "com.android.browser.application_id", "deckpad"],
                                capture_output=True, timeout=10)
                 print(f"  USB phone connected ({serial}) — deck opened on it.", flush=True)
             ready = online  # unplugged phones drop out and get set up again on replug
@@ -529,10 +536,12 @@ def main():
     if adb:
         threading.Thread(target=usb_watcher, args=(adb,), daemon=True).start()
         print("  USB: plug in the phone (USB debugging on) and the deck opens by itself.")
-    if not usb_only:
+    if not usb_only and sys.stdout.isatty():
         print(f"  Wi-Fi: open once on the phone:\n\n"
               f"    http://{lan_ip()}:{PORT}/pair?t={TOKEN}\n")
         print("  Keep that link private — it is the password.")
+    elif not usb_only:  # output is going to a log file: keep the token out of it
+        print("  Wi-Fi: run `python3 server.py --link` to show the pairing link.")
     if DRY_RUN:
         print("  DRY RUN: keystrokes are printed, not sent.")
     print("  Ctrl+C to stop.\n", flush=True)

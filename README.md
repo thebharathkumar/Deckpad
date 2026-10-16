@@ -100,7 +100,7 @@ Delete `.deck_token` and restart to revoke it.
 
 Deckpad presses keys on your computer, so it is built to be locked down:
 
-- A random 192-bit pairing token, stored on the phone as an HttpOnly, SameSite=Strict cookie.
+- A random 192-bit pairing token, stored on the phone as an HttpOnly, SameSite=Lax cookie.
 - Over USB the server can be bound to localhost only (`DECK_USB_ONLY=1`, the autostart default).
 - On Wi-Fi only private-network and Tailscale addresses are accepted, and 8 wrong tokens lock an address out for 10 minutes.
 - Other websites can't press your keys: every action needs a custom header that browsers won't send cross-site.
