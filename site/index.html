@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Deckpad</title>
+  <meta name="description" content="Turn a spare Android phone into a button pad for Claude Code. Free, private, no API key.">
+  <meta name="theme-color" content="#000000">
+  <meta property="og:title" content="Deckpad">
+  <meta property="og:description" content="Turn a spare Android phone into a button pad for Claude Code.">
+  <meta property="og:image" content="deckpad.jpg">
+  <link rel="icon" href="icon.svg">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #000; --label: #f5f5f7; --label-2: #a1a1a6; --label-3: #6e6e73;
+      --panel: #161617; --line: rgba(255,255,255,.1); --blue: #2997ff;
+      --green: #30d158; --orange: #ff9f0a; --purple: #bf5af2; --red: #ff453a;
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", Roboto, system-ui, sans-serif;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--bg); color: var(--label); font: 17px/1.5 var(--sans);
+      -webkit-font-smoothing: antialiased; letter-spacing: -.01em; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 4px; }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    nav .brand { display: flex; align-items: center; gap: 10px; color: var(--label); font-weight: 600; }
+    nav .brand img { width: 26px; height: 26px; }
+
+    /* hero: words left, the real thing right */
+    .hero { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; padding: 56px 0 88px; }
+    h1 { font-size: clamp(40px, 6.2vw, 72px); line-height: 1.04; letter-spacing: -.035em; font-weight: 700; margin: 0 0 22px; }
+    .lede { font-size: clamp(19px, 2vw, 22px); line-height: 1.45; color: var(--label-2); margin: 0 0 32px; max-width: 30em; }
+    .ctas { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 22px; border-radius: 999px;
+      background: var(--blue); color: #fff; font-weight: 600; font-size: 16px; }
+    .btn:hover { text-decoration: none; filter: brightness(1.1); }
+    .btn.ghost { background: transparent; color: var(--blue); padding: 0 6px; }
+
+    .phone { justify-self: center; width: min(320px, 78vw); padding: 10px; border-radius: 50px;
+      background: linear-gradient(160deg, #3a3a3c, #1c1c1e); box-shadow: 0 40px 120px rgba(41,151,255,.18), 0 0 0 1px rgba(255,255,255,.08) inset; }
+    .phone img { display: block; width: 100%; height: auto; border-radius: 40px; }
+
+    section { padding: 72px 0; border-top: 1px solid var(--line); }
+    h2 { font-size: clamp(30px, 4vw, 44px); line-height: 1.1; letter-spacing: -.03em; margin: 0 0 14px; font-weight: 700; }
+    .sub { color: var(--label-2); font-size: 19px; margin: 0 0 40px; max-width: 34em; }
+
+    /* steps really are a sequence, so they're numbered */
+    .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; counter-reset: s; }
+    .steps li { counter-increment: s; }
+    .steps li::before { content: counter(s); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
+      background: var(--panel); border: 1px solid var(--line); font-weight: 600; font-size: 15px; margin-bottom: 14px; }
+    .steps h3 { margin: 0 0 6px; font-size: 20px; letter-spacing: -.02em; }
+    .steps p { margin: 0; color: var(--label-2); }
+
+    pre { margin: 28px 0 0; padding: 54px 22px 20px; border-radius: 18px; background: var(--panel); border: 1px solid var(--line);
+      font: 15px/1.7 var(--mono); color: var(--label); overflow-x: auto; position: relative; }
+    pre .c { color: var(--label-3); }
+    .copy { position: absolute; top: 12px; right: 12px; height: 32px; padding: 0 14px; border: 0; border-radius: 999px;
+      background: rgba(255,255,255,.1); color: var(--label); font: 500 13px var(--sans); cursor: pointer; }
+    .copy:hover { background: rgba(255,255,255,.16); }
+
+    .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 36px 48px; margin: 0; padding: 0; list-style: none; }
+    .features li { display: grid; grid-template-columns: 28px 1fr; gap: 14px; }
+    .features svg { width: 26px; height: 26px; }
+    .features svg path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .features h3 { margin: 0 0 4px; font-size: 19px; letter-spacing: -.02em; }
+    .features p { margin: 0; color: var(--label-2); }
+
+    .note { color: var(--label-2); max-width: 40em; }
+    .note strong { color: var(--label); font-weight: 600; }
+
+    footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--label-3); font-size: 14px; }
+    footer p { margin: 0 0 6px; }
+
+    @media (max-width: 820px) {
+      .hero { grid-template-columns: 1fr; padding: 32px 0 64px; gap: 48px; }
+      .steps, .features { grid-template-columns: 1fr; }
+      section { padding: 56px 0; }
+    }
+    @media (max-width: 480px) { .wrap { padding: 0 16px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="./"><img src="icon.svg" alt="">Deckpad</a>
+      <a href="https://github.com/thebharathkumar/Deckpad">GitHub</a>
+    </nav>
+
+    <header class="hero">
+      <div>
+        <h1>Your old Android phone, now a button pad for Claude Code.</h1>
+        <p class="lede">Plug it into your Mac. Tap Yes, No or Switch to Opus, send work to the
+          background, or just talk. It glows and buzzes when Claude needs you.</p>
+        <div class="ctas">
+          <a class="btn" href="#install">Get Deckpad</a>
+          <a class="btn ghost" href="https://github.com/thebharathkumar/Deckpad">View the code</a>
+        </div>
+      </div>
+      <div class="phone"><img src="deckpad.jpg" width="780" height="1688"
+        alt="Deckpad on a phone showing 'Claude needs your permission to use Bash' above a grid of keys: Yes, No, Continue, Stop, Fable, Opus, Sonnet, Haiku, Agents, Background, Rewind and more."></div>
+    </header>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>Three steps, once.</h2>
+      <p class="sub">After that, plugging the phone in is all it takes.</p>
+      <ol class="steps">
+        <li><h3>Run it on your Mac</h3><p>One Python file. No packages, no account, no API key.</p></li>
+        <li><h3>Plug in your phone</h3><p>Turn on USB debugging once. The pad opens on the phone by itself.</p></li>
+        <li><h3>Tap instead of type</h3><p>Every tap becomes keystrokes in the terminal where Claude Code runs.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap">
+      <h2>Install</h2>
+      <p class="sub">macOS, Python 3.9 or later, Claude Code, and an Android phone with a cable.</p>
+      <pre id="cmd"><button class="copy" type="button" data-copy="cmd">Copy</button><span class="c"># the tool that talks to the phone over USB</span>
+brew install --cask android-platform-tools
+
+git clone https://github.com/thebharathkumar/Deckpad.git
+cd Deckpad
+python3 server.py --setup   <span class="c"># lets Claude tell the phone when it needs you</span>
+python3 server.py</pre>
+      <p class="note" style="margin-top:24px">On the phone: Settings → About phone → tap <strong>Build number</strong> seven times,
+        then turn on <strong>USB debugging</strong> in Developer options. Plug in and tap Allow.
+        <a href="https://github.com/thebharathkumar/Deckpad#readme">Full guide</a></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Small on purpose.</h2>
+      <p class="sub">Everything you need at arm's length, and nothing you don't.</p>
+      <ul class="features">
+        <li><svg viewBox="0 0 24 24" style="color:var(--green)" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+          <div><h3>Answer prompts in one tap</h3><p>Yes, Yes always, No, Continue, Stop. Big targets you can hit without looking.</p></div></li>
+        <li><svg viewBox="0 0 24 24" style="color:var(--orange)" aria-hidden="true"><path d="M12 3.5l2 6.5 6.5 2-6.5 2-2 6.5-2-6.5-6.5-2 6.5-2z"/></svg>
+          <div><h3>Switch models and agents</h3><p>Fable, Opus, Sonnet and Haiku, plus background tasks, agents and rewind.</p></div></li>
+        <li><svg viewBox="0 0 24 24" style="color:var(--blue)" aria-hidden="true"><path d="M12 3.5a2.5 2.5 0 0 1 2.5 2.5v5a2.5 2.5 0 0 1-5 0V6A2.5 2.5 0 0 1 12 3.5zM6.5 11a5.5 5.5 0 0 0 11 0M12 16.5v4"/></svg>
+          <div><h3>Talk instead of type</h3><p>Dictate a reply with the phone's own speech recognition, then send.</p></div></li>
+        <li><svg viewBox="0 0 24 24" style="color:var(--purple)" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7M17 14l3 3-3 3"/></svg>
+          <div><h3>Make it yours</h3><p>Add keys, change what they type, pick colors and symbols, all from the phone.</p></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Private by design.</h2>
+      <p class="note">Deckpad has no server and no accounts. It runs on <strong>your</strong> Mac and talks to
+        <strong>your</strong> phone, over the cable by default. It never sees your code or your Claude account,
+        and it can't run commands: it can only press the keys you've set up. A random pairing token,
+        localhost-only mode and lockouts after wrong attempts keep anyone else off your keyboard.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <p>Deckpad is free and open source under the MIT license.</p>
+      <p>Unofficial community project. Not affiliated with or endorsed by Anthropic. Claude is a trademark of Anthropic.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.copy').forEach((b) => b.addEventListener('click', async () => {
+      const text = document.getElementById(b.dataset.copy).innerText.replace(/^Copy\s*/, '')
+        .split('\n').filter((l) => l.trim() && !l.trim().startsWith('#'))
+        .map((l) => l.replace(/\s+#.*$/, '')).join('\n');
+      try { await navigator.clipboard.writeText(text); b.textContent = 'Copied'; }
+      catch { b.textContent = 'Select and copy'; }
+      setTimeout(() => (b.textContent = 'Copy'), 1800);
+    }));
+  </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+.deck_token
+config.json
+__pycache__/
+deck.log

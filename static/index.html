@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <title>Deckpad</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body data-kind="idle">
+  <div class="glow cold"></div><div class="glow warm"></div><div class="glow hot"></div>
+
+  <header id="strip">
+    <span id="swatch" title="Claude's state"><span id="conn" class="led" title="Connection to your Mac"></span></span>
+    <div id="status">
+      <div id="status-msg">Waiting for Claude</div>
+      <div id="status-sub">Nothing to do yet</div>
+    </div>
+    <button id="edit-toggle" class="btn plain" aria-label="Edit buttons">Edit</button>
+  </header>
+
+  <main id="grid"></main>
+
+  <div id="edit-bar" hidden>
+    <label>Send keys to app
+      <input id="target-app" placeholder="Leave blank for the window in front">
+    </label>
+    <div class="row">
+      <button id="add-btn" class="btn">Add key</button>
+      <button id="reset-btn" class="btn">Reset</button>
+      <button id="save-btn" class="btn primary">Save</button>
+    </div>
+  </div>
+
+  <footer id="dictate">
+    <button id="mic" class="round" aria-label="Dictate">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z" fill="currentColor"/></svg>
+    </button>
+    <div class="field">
+      <textarea id="text" rows="1" placeholder="Reply to Claude"></textarea>
+      <button id="send" class="round send" aria-label="Send">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 4l7 7-1.4 1.4L13 7.8V20h-2V7.8l-4.6 4.6L5 11z" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </footer>
+
+  <div id="toast" hidden></div>
+
+  <dialog id="btn-dialog">
+    <form method="dialog">
+      <div class="sheet-head">
+        <button value="delete" class="btn plain danger-text">Delete</button>
+        <h2>Edit Key</h2>
+        <button value="ok" class="btn plain strong">Done</button>
+      </div>
+      <div class="group">
+        <label>Label <input id="f-label" maxlength="40" required></label>
+        <label>What it types <input id="f-macro" maxlength="500" required
+          placeholder="/model opus{enter}"></label>
+        <label>Color
+          <select id="f-color">
+            <option value="gray">Default</option>
+            <option value="graphite">Dark</option>
+            <option value="green">Green</option>
+            <option value="teal">Teal</option>
+            <option value="blue">Blue</option>
+            <option value="purple">Purple</option>
+            <option value="amber">Orange</option>
+            <option value="red">Red</option>
+          </select>
+        </label>
+        <label>Symbol
+          <select id="f-icon"><option value="">None</option></select>
+        </label>
+      </div>
+      <p class="hint">Text is typed as written. Keys go in braces: {enter} {esc} {tab} {up} {down}
+        {left} {right} {backspace} {space} {wait}, and combos like {shift+tab} {ctrl+c}.</p>
+      <div class="row">
+        <button value="left" class="btn">Move earlier</button>
+        <button value="right" class="btn">Move later</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/app.js"></script>
+</body>
+</html>

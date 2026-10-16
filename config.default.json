@@ -1,0 +1,25 @@
+{
+  "targetApp": "",
+  "buttons": [
+    {"id": "yes", "label": "Yes", "macro": "{enter}", "color": "green", "icon": "check"},
+    {"id": "yes-always", "label": "Yes, always", "macro": "{down}{enter}", "color": "teal", "icon": "check-all"},
+    {"id": "no", "label": "No", "macro": "{esc}", "color": "red", "icon": "xmark"},
+    {"id": "continue", "label": "Continue", "macro": "continue{enter}", "color": "blue", "icon": "play"},
+    {"id": "mode", "label": "Cycle mode", "macro": "{shift+tab}", "color": "purple", "icon": "cycle"},
+    {"id": "interrupt", "label": "Stop", "macro": "{ctrl+c}", "color": "graphite", "icon": "stop"},
+    {"id": "fable", "label": "Fable", "macro": "/model fable{enter}", "color": "amber", "icon": "book"},
+    {"id": "opus", "label": "Opus", "macro": "/model opus{enter}", "color": "amber", "icon": "sparkles"},
+    {"id": "sonnet", "label": "Sonnet", "macro": "/model sonnet{enter}", "color": "amber", "icon": "sparkle"},
+    {"id": "haiku", "label": "Haiku", "macro": "/model haiku{enter}", "color": "amber", "icon": "bolt"},
+    {"id": "agents", "label": "Agents", "macro": "/tasks{enter}", "color": "purple", "icon": "agents"},
+    {"id": "background", "label": "Background", "macro": "{ctrl+b}", "color": "purple", "icon": "layers"},
+    {"id": "stop-agents", "label": "Stop agents", "macro": "{ctrl+x}{ctrl+k}", "color": "red", "icon": "stop"},
+    {"id": "rewind", "label": "Rewind", "macro": "{esc}{esc}", "color": "gray", "icon": "undo"},
+    {"id": "context", "label": "Context", "macro": "/context{enter}", "color": "gray", "icon": "gauge"},
+    {"id": "compact", "label": "/compact", "macro": "/compact{enter}", "color": "gray", "icon": "compress"},
+    {"id": "clear", "label": "/clear", "macro": "/clear{enter}", "color": "gray", "icon": "trash"},
+    {"id": "enter", "label": "Enter", "macro": "{enter}", "color": "gray", "icon": "return"},
+    {"id": "up", "label": "Up", "macro": "{up}", "color": "gray", "icon": "up"},
+    {"id": "down", "label": "Down", "macro": "{down}", "color": "gray", "icon": "down"}
+  ]
+}
